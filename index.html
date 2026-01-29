@@ -41,7 +41,6 @@
     <!-- スプラッシュ画面 -->
     <div id="splash-screen">
         <div class="w-48 h-48 mb-6">
-            <!-- デザインしたSVGアイコン -->
             <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="512" height="512" rx="110" fill="#000000"/>
                 <path d="M100 412L412 100" stroke="#004400" stroke-width="2" stroke-dasharray="10 10"/>
@@ -54,7 +53,7 @@
             </svg>
         </div>
         <h1 class="text-green-500 font-black tracking-widest text-xl mb-2">FIELD DISTANCE PRO</h1>
-        <p class="text-green-900 text-[10px] animate-pulse uppercase">Waiting for System Initialization...</p>
+        <p class="text-green-900 text-[10px] animate-pulse uppercase">システム初期化中...</p>
         <button id="start-btn" class="mt-8 bg-green-500 text-black font-black py-4 px-12 rounded-full shadow-[0_0_30px_rgba(0,255,0,0.4)] active:scale-95 transition-all pointer-auto">
             システム開始
         </button>
@@ -67,7 +66,7 @@
         <!-- 上部：データパネル -->
         <div class="p-4 flex justify-between items-start pt-10">
             <div class="bg-black/90 border-2 border-green-500 p-4 rounded-xl pointer-auto shadow-2xl">
-                <div class="text-[12px] text-green-500 font-bold mb-1 italic">推定距離 (Target Footer)</div>
+                <div class="text-[12px] text-green-500 font-bold mb-1 italic">推定距離 (対象の接地面を狙う)</div>
                 <div id="result-display" class="text-6xl font-black text-green-400 italic">---<span class="text-2xl ml-1 font-normal">m</span></div>
                 
                 <div class="grid grid-cols-2 gap-4 mt-4 border-t border-green-900 pt-3">
@@ -81,7 +80,7 @@
                     </div>
                 </div>
             </div>
-            <div id="status-badge" class="bg-zinc-900 text-green-500 px-3 py-1 rounded border border-green-800 text-[10px] font-bold">READY</div>
+            <div id="status-badge" class="bg-zinc-900 text-green-500 px-3 py-1 rounded border border-green-800 text-[10px] font-bold">準備完了</div>
         </div>
 
         <!-- 中央：レティクル -->
@@ -94,14 +93,14 @@
         <!-- 右側：ズーム操作 -->
         <div class="absolute right-[-100px] top-1/2 -translate-y-1/2 w-64 h-64 flex items-center justify-center pointer-auto">
             <input type="range" id="zoom-slider" min="1" max="10" step="0.1" value="1" class="v-range">
-            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded">ZOOM</div>
+            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded">ズーム</div>
         </div>
 
         <!-- 下部：ログと操作 -->
         <div class="p-6 bg-black/95 border-t-2 border-green-900 pointer-auto shadow-inner">
             <div class="flex justify-between items-center gap-4">
                 <div class="flex-1 bg-zinc-950 p-3 rounded border border-green-900 h-28 overflow-y-auto text-[11px] text-green-400 font-mono" id="log-list">
-                    <div class="text-zinc-700 border-b border-zinc-900 mb-1 italic">-- MEASUREMENT LOG --</div>
+                    <div class="text-zinc-700 border-b border-zinc-900 mb-1 italic">-- 計測ログ履歴 --</div>
                 </div>
                 <button id="record-btn" class="w-24 h-24 bg-green-600 rounded-2xl border-4 border-white/20 shadow-xl flex items-center justify-center active:scale-95 transition-all">
                     <span class="font-black text-black text-sm">記録</span>
@@ -126,14 +125,12 @@
 
         async function init() {
             try {
-                // カメラ開始
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment', width: { ideal: 1920 } }
                 });
                 video.srcObject = stream;
                 videoTrack = stream.getVideoTracks()[0];
 
-                // センサー許可
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission === 'granted') {
@@ -143,11 +140,10 @@
                     window.addEventListener('deviceorientation', onData, true);
                 }
 
-                // スプラッシュ画面をフェードアウト
                 splash.style.opacity = '0';
                 setTimeout(() => splash.remove(), 800);
                 
-                statusBadge.innerText = "ACTIVE";
+                statusBadge.innerText = "稼働中";
                 statusBadge.classList.replace('text-green-500', 'text-white');
                 statusBadge.classList.add('bg-green-700');
 
@@ -157,14 +153,14 @@
         }
 
         function onData(e) {
-            const pitch = e.beta; // 俯角
+            const pitch = e.beta; 
             pitchDisplay.innerText = pitch.toFixed(1) + "°";
             
             const h = parseFloat(camHeightInput.value) || 1.5;
             const theta = 90 - pitch;
             
             if (theta <= 0.5) {
-                resultDisplay.innerHTML = "INFINITY";
+                resultDisplay.innerHTML = "測定不能";
             } else {
                 const dist = h * Math.tan(theta * (Math.PI / 180));
                 resultDisplay.innerHTML = dist.toFixed(1) + "<span class='text-2xl ml-1 font-normal'>m</span>";
