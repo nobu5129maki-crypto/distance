@@ -1,0 +1,40 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景: フィールドを象徴する深い黒とグリーンのグラデーション -->
+  <rect width="512" height="512" rx="110" fill="#000000"/>
+  <rect width="512" height="512" rx="110" fill="url(#paint0_radial)" fill-opacity="0.3"/>
+  
+  <!-- 地形・距離を象徴するパターンの斜線 -->
+  <path d="M100 412L412 100" stroke="#004400" stroke-width="2" stroke-dasharray="10 10"/>
+  <path d="M150 412L412 150" stroke="#004400" stroke-width="2" stroke-dasharray="10 10"/>
+  <path d="M50 412L412 50" stroke="#004400" stroke-width="2" stroke-dasharray="10 10"/>
+
+  <!-- メインシンボル: レティクルと"D"の融合 -->
+  <!-- 円形の照準フレーム -->
+  <circle cx="256" cy="256" r="140" stroke="#00FF00" stroke-width="12" stroke-linecap="round" stroke-dasharray="200 40"/>
+  
+  <!-- 精密計測の十字線 -->
+  <path d="M256 180V120" stroke="#00FF00" stroke-width="12" stroke-linecap="round"/>
+  <path d="M256 332V392" stroke="#00FF00" stroke-width="12" stroke-linecap="round"/>
+  <path d="M180 256H120" stroke="#00FF00" stroke-width="12" stroke-linecap="round"/>
+  <path d="M332 256H392" stroke="#00FF00" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- 中央のコア・ドット (レーザー照射のイメージ) -->
+  <circle cx="256" cy="256" r="12" fill="#FFFFFF">
+    <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="256" cy="256" r="25" stroke="#00FF00" stroke-width="2" opacity="0.5"/>
+
+  <!-- 距離測定の弧 (DistanceのDを暗示) -->
+  <path d="M256 160C309.019 160 352 202.981 352 256C352 309.019 309.019 352 256 352" stroke="white" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- 下部のデジタル・グリッド装飾 -->
+  <path d="M180 440H332" stroke="#00FF00" stroke-width="4" opacity="0.6"/>
+  <rect x="240" y="435" width="32" height="10" rx="2" fill="#00FF00"/>
+
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 256) rotate(90) scale(256)">
+      <stop stop-color="#00FF00"/>
+      <stop offset="1" stop-color="black" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
