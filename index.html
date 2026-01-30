@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>フィールド・メジャー Pro</title>
     
-    <!-- インラインSVGアイコン設定 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23000'/%3E%3Ccircle cx='256' cy='256' r='140' stroke='%230F0' stroke-width='12' fill='none'/%3E%3Cpath d='M256 180V120M256 332V392M180 256H120M332 256H392' stroke='%230F0' stroke-width='12'/%3E%3Ccircle cx='256' cy='256' r='12' fill='%23FFF'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23000'/%3E%3Ccircle cx='256' cy='256' r='140' stroke='%230F0' stroke-width='12' fill='none'/%3E%3Cpath d='M256 180V120M256 332V392M180 256H120M332 256H392' stroke='%230F0' stroke-width='12'/%3E%3Ccircle cx='256' cy='256' r='12' fill='%23FFF'/%3E%3C/svg%3E">
 
@@ -18,110 +17,96 @@
         #ui-layer { position: relative; z-index: 10; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; }
         .pointer-auto { pointer-events: auto; }
         
-        /* 起動画面 */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; flex-direction: column;
             align-items: center; justify-content: center; transition: opacity 0.8s ease-out;
         }
 
-        /* レティクル */
         #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; pointer-events: none; }
-        .cross-line { position: absolute; background: #0f0; box-shadow: 0 0 10px #0f0; transition: background 0.3s; }
+        .cross-line { position: absolute; background: #0f0; box-shadow: 0 0 10px #0f0; transition: background 0.3s, opacity 0.3s; }
         .v-line { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
         .h-line { top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%); }
 
-        /* スライダー */
         .v-range { appearance: none; width: 250px; height: 10px; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-radius: 5px; transform: rotate(-90deg); }
         .v-range::-webkit-slider-thumb { appearance: none; width: 35px; height: 35px; background: #0f0; border-radius: 50%; cursor: pointer; border: 2px solid white; }
         
-        /* 理想範囲インジケーターのアニメーション */
         .ideal-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* 水平器用ゲージ */
+        #level-indicator {
+            position: absolute; left: 50%; top: calc(50% + 80px); transform: translateX(-50%);
+            width: 100px; height: 4px; background: rgba(0,255,0,0.2); border-radius: 2px;
+        }
+        #level-ball {
+            position: absolute; top: -4px; left: 50%; width: 12px; height: 12px;
+            background: #0f0; border-radius: 50%; transform: translateX(-50%);
+            transition: left 0.1s ease-out; box-shadow: 0 0 8px #0f0;
         }
     </style>
 </head>
 <body>
 
-    <!-- スプラッシュ画面 -->
     <div id="splash-screen">
         <div class="w-48 h-48 mb-6">
             <svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="512" height="512" rx="110" fill="#000000"/>
-                <path d="M100 412L412 100" stroke="#004400" stroke-width="2" stroke-dasharray="10 10"/>
-                <circle cx="256" cy="256" r="140" stroke="#00FF00" stroke-width="12" stroke-linecap="round" stroke-dasharray="200 40"/>
-                <path d="M256 180V120M256 332V392M180 256H120M332 256H392" stroke="#00FF00" stroke-width="12" stroke-linecap="round"/>
-                <circle cx="256" cy="256" r="12" fill="#FFFFFF">
-                    <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
-                </circle>
-                <path d="M256 160C309.019 160 352 202.981 352 256C352 309.019 309.019 352 256 352" stroke="white" stroke-width="12" stroke-linecap="round"/>
+                <circle cx="256" cy="256" r="140" stroke="#00FF00" stroke-width="12"/>
+                <path d="M256 180V120M256 332V392M180 256H120M332 256H392" stroke="#00FF00" stroke-width="12"/>
+                <circle cx="256" cy="256" r="12" fill="#FFFFFF"><animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" /></circle>
             </svg>
         </div>
-        <h1 class="text-green-500 font-black tracking-widest text-xl mb-2">FIELD DISTANCE PRO</h1>
-        <p class="text-green-900 text-[10px] animate-pulse uppercase text-center px-4">システム初期化中...<br>HTTPS接続とセンサー許可を確認してください</p>
-        <button id="start-btn" class="mt-8 bg-green-500 text-black font-black py-4 px-12 rounded-full shadow-[0_0_30px_rgba(0,255,0,0.4)] active:scale-95 transition-all pointer-auto">
-            システム開始
-        </button>
+        <h1 class="text-green-500 font-black tracking-widest text-xl mb-2 italic">FIELD DISTANCE PRO</h1>
+        <p class="text-green-900 text-[10px] animate-pulse">遠距離安定化アルゴリズム搭載</p>
+        <button id="start-btn" class="mt-8 bg-green-500 text-black font-black py-4 px-12 rounded-full shadow-[0_0_30px_rgba(0,255,0,0.4)] active:scale-95 transition-all pointer-auto">計測開始</button>
     </div>
 
-    <!-- カメラ -->
     <video id="video-preview" autoplay playsinline muted></video>
 
     <div id="ui-layer">
-        <!-- 上部：データ -->
         <div class="p-4 flex flex-col gap-2 pt-10 items-start">
-            <div class="bg-black/90 border-2 border-green-500 p-4 rounded-xl pointer-auto shadow-2xl min-w-[220px]">
-                <div class="text-[10px] text-green-500 font-bold mb-1 italic">推定距離 (対象の接地面を狙う)</div>
-                <div id="result-display" class="text-6xl font-black text-green-400 italic">---<span class="text-2xl ml-1 font-normal">m</span></div>
+            <div class="bg-black/90 border-2 border-green-500 p-4 rounded-xl pointer-auto shadow-2xl min-w-[240px]">
+                <div class="text-[10px] text-green-500 font-bold mb-1 italic">推定距離 (フィルタリング済)</div>
+                <div id="result-display" class="text-6xl font-black text-green-400 italic tracking-tighter">---<span class="text-2xl ml-1 font-normal uppercase">m</span></div>
                 
-                <div class="grid grid-cols-2 gap-4 mt-4 border-t border-green-900 pt-3 mb-2">
-                    <div class="text-center">
-                        <span class="text-[10px] text-gray-400 block font-bold">デバイス俯角</span>
-                        <span id="pitch-display" class="text-lg text-white font-mono block transition-colors duration-300">0.0°</span>
+                <div class="grid grid-cols-2 gap-4 mt-4 border-t border-green-900 pt-3 mb-2 text-center">
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-bold uppercase">角度</span>
+                        <span id="pitch-display" class="text-xl text-white font-mono block transition-colors">0.0°</span>
                     </div>
                     <div>
-                        <span class="text-[10px] text-gray-400 block font-bold text-center">カメラ高(m)</span>
-                        <input type="number" id="cam-height" value="1.5" step="0.1" class="bg-zinc-800 text-lg text-white border border-green-500 w-full outline-none px-1 text-center rounded">
+                        <span class="text-[10px] text-gray-400 block font-bold uppercase text-center">カメラ高(m)</span>
+                        <input type="number" id="cam-height" value="1.5" step="0.1" class="bg-zinc-800 text-xl text-white border border-green-500 w-full outline-none px-1 text-center rounded">
                     </div>
                 </div>
 
-                <!-- 理想の角度インジケーター -->
-                <div id="angle-status" class="w-full py-1 text-[11px] font-bold text-center rounded transition-all duration-300 bg-zinc-900 text-zinc-500">
-                    角度を調整中...
-                </div>
-                <div class="mt-1 flex justify-between text-[8px] text-zinc-600 font-bold px-1">
-                    <span>0° (水平)</span>
-                    <span class="text-green-800">理想 (30-60°)</span>
-                    <span>90° (垂直)</span>
-                </div>
+                <div id="angle-status" class="w-full py-1 text-[11px] font-bold text-center rounded transition-all bg-zinc-900 text-zinc-500">角度を解析中...</div>
             </div>
-            <div id="status-badge" class="bg-zinc-900 text-green-500 px-3 py-1 rounded border border-green-800 text-[10px] font-bold">準備完了</div>
+            <div id="status-badge" class="bg-zinc-900 text-green-500 px-3 py-1 rounded border border-green-800 text-[10px] font-bold tracking-widest uppercase italic">Ready</div>
         </div>
 
-        <!-- 中央：レティクル -->
         <div id="crosshair">
             <div id="v-line" class="cross-line v-line"></div>
             <div id="h-line" class="cross-line h-line"></div>
             <div id="center-dot" class="w-4 h-4 bg-green-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-lg transition-colors"></div>
+            
+            <!-- 水平器ゲージ -->
+            <div id="level-indicator"><div id="level-ball"></div></div>
         </div>
 
-        <!-- 右側：ズーム -->
         <div class="absolute right-[-100px] top-1/2 -translate-y-1/2 w-64 h-64 flex items-center justify-center pointer-auto">
             <input type="range" id="zoom-slider" min="1" max="10" step="0.1" value="1" class="v-range">
-            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded">ズーム</div>
+            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded italic">ZOOM</div>
         </div>
 
-        <!-- 下部：ログ -->
         <div class="p-6 bg-black/95 border-t-2 border-green-900 pointer-auto">
             <div class="flex justify-between items-center gap-4">
                 <div class="flex-1 bg-zinc-950 p-3 rounded border border-green-900 h-28 overflow-y-auto text-[11px] text-green-400 font-mono" id="log-list">
-                    <div class="text-zinc-700 border-b border-zinc-900 mb-1 italic">-- 計測ログ履歴 --</div>
+                    <div class="text-zinc-800 border-b border-zinc-900 mb-1 italic">-- SENSOR HISTORY --</div>
                 </div>
                 <button id="record-btn" class="w-24 h-24 bg-green-600 rounded-2xl border-4 border-white/20 shadow-xl flex items-center justify-center active:scale-95 transition-all">
-                    <span class="font-black text-black text-sm text-center">記録<br><span class="text-[9px]">RECORD</span></span>
+                    <div class="text-center"><span class="font-black text-black text-sm">記録</span><br><span class="text-[8px] text-black/60 font-bold">LOG</span></div>
                 </button>
             </div>
         </div>
@@ -142,8 +127,14 @@
         const hLine = document.getElementById('h-line');
         const vLine = document.getElementById('v-line');
         const centerDot = document.getElementById('center-dot');
+        const levelBall = document.getElementById('level-ball');
 
         let videoTrack = null;
+        
+        // 数値安定化用の変数 (指数移動平均フィルタ)
+        let filteredPitch = 0;
+        const smoothingFactorNormal = 0.2; // 近距離用スムージング
+        const smoothingFactorStable = 0.05; // 遠距離用（より強力なフィルタリング）
 
         async function init() {
             try {
@@ -156,86 +147,91 @@
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                     const permission = await DeviceOrientationEvent.requestPermission();
                     if (permission === 'granted') {
-                        window.addEventListener('deviceorientation', onData, true);
+                        window.addEventListener('deviceorientation', onOrientation, true);
                     }
                 } else {
-                    window.addEventListener('deviceorientation', onData, true);
+                    window.addEventListener('deviceorientation', onOrientation, true);
                 }
 
                 splash.style.opacity = '0';
                 setTimeout(() => splash.remove(), 800);
-                
-                statusBadge.innerText = "稼働中";
+                statusBadge.innerText = "Active";
                 statusBadge.classList.replace('text-green-500', 'text-white');
                 statusBadge.classList.add('bg-green-700');
 
             } catch (err) {
-                alert("起動エラー: HTTPS環境とカメラ・センサーの許可が必要です。");
+                alert("エラー: HTTPS接続とカメラ・センサーの許可が必要です。");
             }
         }
 
-        function onData(e) {
-            const pitch = e.beta; 
-            pitchDisplay.innerText = pitch.toFixed(1) + "°";
+        function onOrientation(e) {
+            const rawPitch = e.beta; // 前後の傾き
+            const roll = e.gamma;  // 左右の傾き（水平器用）
+
+            // 水平器の表示更新（±30度の範囲を可視化）
+            const ballPos = 50 + (roll * 1.5); 
+            levelBall.style.left = Math.max(5, Math.min(95, ballPos)) + "%";
+
+            // 遠距離（角度が浅い時）ほどフィルタリングを強める
+            const factor = (rawPitch < 12) ? smoothingFactorStable : smoothingFactorNormal;
             
-            // 精度インジケーターの更新
-            updateAngleIndicator(pitch);
+            // 指数移動平均フィルタ
+            if (filteredPitch === 0) filteredPitch = rawPitch;
+            filteredPitch = (factor * rawPitch) + ((1 - factor) * filteredPitch);
+
+            pitchDisplay.innerText = filteredPitch.toFixed(1) + "°";
+            
+            updateAngleIndicator(filteredPitch, roll);
             
             const h = parseFloat(camHeightInput.value) || 1.5;
-            const theta = 90 - pitch;
+            const theta = 90 - filteredPitch;
             
             if (theta <= 0.5) {
-                resultDisplay.innerHTML = "測定不可";
+                resultDisplay.innerHTML = "MAX RANGE";
             } else {
                 const dist = h * Math.tan(theta * (Math.PI / 180));
-                resultDisplay.innerHTML = dist.toFixed(1) + "<span class='text-2xl ml-1 font-normal'>m</span>";
+                // 10m超えたら小数点第1位、それ以下は第2位まで表示
+                resultDisplay.innerHTML = dist.toFixed(dist > 10 ? 1 : 2) + "<span class='text-2xl ml-1 font-normal'>m</span>";
             }
         }
 
-        function updateAngleIndicator(pitch) {
+        function updateAngleIndicator(pitch, roll) {
+            const isLevel = Math.abs(roll) < 2.0; // 左右の傾き許容範囲
+            
             if (pitch >= 30 && pitch <= 60) {
-                // 理想的
-                angleStatus.innerText = "理想的な角度 (高精度)";
-                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded transition-all bg-green-500 text-black ideal-pulse";
-                pitchDisplay.classList.replace('text-white', 'text-green-400');
-                hLine.style.background = "#0f0";
-                vLine.style.background = "#0f0";
-                centerDot.style.background = "#0f0";
-            } else if (pitch < 15) {
-                // 不安定
-                angleStatus.innerText = "不安定 (高所から狙ってください)";
-                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded transition-all bg-red-900/80 text-white";
-                pitchDisplay.classList.replace('text-green-400', 'text-white');
-                hLine.style.background = "#f00";
-                vLine.style.background = "#f00";
-                centerDot.style.background = "#f00";
+                angleStatus.innerText = "近距離・高精度モード";
+                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded bg-green-600 text-black";
+                setCrosshairColor("#0f0");
+            } else if (pitch < 12) {
+                angleStatus.innerText = isLevel ? "遠距離モード (手ブレ注意)" : "スマホを水平に保ってください";
+                angleStatus.className = isLevel ? "w-full py-1 text-[11px] font-bold text-center rounded bg-blue-900 text-white ideal-pulse" : "w-full py-1 text-[11px] font-bold text-center rounded bg-red-900 text-white";
+                setCrosshairColor(isLevel ? "#4ae" : "#f33");
             } else {
-                // 通常
-                angleStatus.innerText = "測定中 (理想は30°〜60°)";
-                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded transition-all bg-zinc-800 text-green-700";
-                pitchDisplay.classList.replace('text-green-400', 'text-white');
-                hLine.style.background = "#0f0";
-                vLine.style.background = "#0f0";
-                centerDot.style.background = "#0f0";
+                angleStatus.innerText = "通常計測モード";
+                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded bg-zinc-800 text-green-700";
+                setCrosshairColor("#0f0");
             }
+        }
+
+        function setCrosshairColor(color) {
+            hLine.style.background = color;
+            vLine.style.background = color;
+            centerDot.style.background = color;
+            centerDot.style.boxShadow = `0 0 10px ${color}`;
         }
 
         recordBtn.addEventListener('click', () => {
             if ("vibrate" in navigator) navigator.vibrate(50);
             const log = document.createElement('div');
             log.className = "border-b border-zinc-900 py-1 flex justify-between";
-            const now = new Date();
-            const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0') + ":" + now.getSeconds().toString().padStart(2, '0');
-            log.innerHTML = `<span class="text-zinc-600">${timeStr}</span> <span class="text-green-500 font-bold">${resultDisplay.innerText} (${pitchDisplay.innerText})</span>`;
+            const timeStr = new Date().toLocaleTimeString('ja-JP', {hour12: false});
+            log.innerHTML = `<span class="text-zinc-600">${timeStr}</span> <span class="text-green-500 font-bold">${resultDisplay.innerText}</span>`;
             logList.prepend(log);
         });
 
         zoomSlider.addEventListener('input', async (e) => {
-            if (videoTrack) {
-                const capabilities = videoTrack.getCapabilities ? videoTrack.getCapabilities() : {};
-                if (capabilities.zoom) {
-                    await videoTrack.applyConstraints({ advanced: [{ zoom: e.target.value }] });
-                }
+            if (videoTrack && videoTrack.getCapabilities().zoom) {
+                await videoTrack.applyConstraints({ advanced: [{ zoom: e.target.value }] });
             }
         });
 
