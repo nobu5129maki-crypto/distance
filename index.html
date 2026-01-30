@@ -23,26 +23,26 @@
             align-items: center; justify-content: center; transition: opacity 0.8s ease-out;
         }
 
-        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; pointer-events: none; }
-        .cross-line { position: absolute; background: #0f0; box-shadow: 0 0 10px #0f0; transition: background 0.3s, opacity 0.3s; }
-        .v-line { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
-        .h-line { top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%); }
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; pointer-events: none; }
+        .cross-line { position: absolute; background: rgba(0, 255, 0, 0.5); transition: background 0.3s, opacity 0.3s; }
+        .v-line { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); }
+        .h-line { top: 50%; left: 0; width: 100%; height: 1px; transform: translateY(-50%); }
+        .inner-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 1px solid rgba(0, 255, 0, 0.5); border-radius: 50%; }
 
         .v-range { appearance: none; width: 250px; height: 10px; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-radius: 5px; transform: rotate(-90deg); }
         .v-range::-webkit-slider-thumb { appearance: none; width: 35px; height: 35px; background: #0f0; border-radius: 50%; cursor: pointer; border: 2px solid white; }
         
-        .ideal-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .ideal-pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; background-color: rgba(30, 58, 138, 1); } 50% { opacity: 0.7; background-color: rgba(37, 99, 235, 1); } }
 
-        /* 水平器用ゲージ */
         #level-indicator {
-            position: absolute; left: 50%; top: calc(50% + 80px); transform: translateX(-50%);
-            width: 100px; height: 4px; background: rgba(0,255,0,0.2); border-radius: 2px;
+            position: absolute; left: 50%; top: calc(50% + 110px); transform: translateX(-50%);
+            width: 120px; height: 2px; background: rgba(0,255,0,0.1); border-radius: 2px;
         }
         #level-ball {
-            position: absolute; top: -4px; left: 50%; width: 12px; height: 12px;
+            position: absolute; top: -5px; left: 50%; width: 12px; height: 12px;
             background: #0f0; border-radius: 50%; transform: translateX(-50%);
-            transition: left 0.1s ease-out; box-shadow: 0 0 8px #0f0;
+            transition: left 0.05s linear; box-shadow: 0 0 10px #0f0;
         }
     </style>
 </head>
@@ -58,55 +58,57 @@
             </svg>
         </div>
         <h1 class="text-green-500 font-black tracking-widest text-xl mb-2 italic">FIELD DISTANCE PRO</h1>
-        <p class="text-green-900 text-[10px] animate-pulse">遠距離安定化アルゴリズム搭載</p>
+        <p class="text-green-900 text-[10px] animate-pulse">水平目線・18m最適化アップデート</p>
         <button id="start-btn" class="mt-8 bg-green-500 text-black font-black py-4 px-12 rounded-full shadow-[0_0_30px_rgba(0,255,0,0.4)] active:scale-95 transition-all pointer-auto">計測開始</button>
     </div>
 
     <video id="video-preview" autoplay playsinline muted></video>
 
     <div id="ui-layer">
-        <div class="p-4 flex flex-col gap-2 pt-10 items-start">
-            <div class="bg-black/90 border-2 border-green-500 p-4 rounded-xl pointer-auto shadow-2xl min-w-[240px]">
-                <div class="text-[10px] text-green-500 font-bold mb-1 italic">推定距離 (フィルタリング済)</div>
-                <div id="result-display" class="text-6xl font-black text-green-400 italic tracking-tighter">---<span class="text-2xl ml-1 font-normal uppercase">m</span></div>
+        <div class="p-4 flex flex-col gap-2 pt-10 items-start w-full">
+            <div class="bg-black/90 border-2 border-green-500 p-4 rounded-xl pointer-auto shadow-2xl w-full max-w-[320px]">
+                <div class="flex justify-between items-start mb-1">
+                    <div class="text-[10px] text-green-500 font-bold italic uppercase tracking-wider">Estimated Distance</div>
+                    <button id="calibrate-btn" class="bg-red-600 text-white text-[9px] px-2 py-1 rounded font-bold animate-pulse">水平リセット</button>
+                </div>
                 
-                <div class="grid grid-cols-2 gap-4 mt-4 border-t border-green-900 pt-3 mb-2 text-center">
+                <div id="result-display" class="text-6xl font-black text-green-400 italic tracking-tighter leading-none mb-2">---<span class="text-2xl ml-1 font-normal uppercase">m</span></div>
+                
+                <div class="grid grid-cols-2 gap-4 mt-2 border-t border-green-900 pt-3 mb-2 text-center">
                     <div>
-                        <span class="text-[10px] text-gray-400 block font-bold uppercase">角度</span>
-                        <span id="pitch-display" class="text-xl text-white font-mono block transition-colors">0.0°</span>
+                        <span class="text-[10px] text-gray-500 block font-bold uppercase">補正後角度</span>
+                        <span id="pitch-display" class="text-xl text-white font-mono block">0.0°</span>
                     </div>
                     <div>
-                        <span class="text-[10px] text-gray-400 block font-bold uppercase text-center">カメラ高(m)</span>
-                        <input type="number" id="cam-height" value="1.5" step="0.1" class="bg-zinc-800 text-xl text-white border border-green-500 w-full outline-none px-1 text-center rounded">
+                        <span class="text-[10px] text-gray-500 block font-bold uppercase">カメラ高(m)</span>
+                        <input type="number" id="cam-height" value="1.5" step="0.05" class="bg-zinc-800 text-xl text-white border border-green-500 w-full outline-none px-1 text-center rounded">
                     </div>
                 </div>
 
-                <div id="angle-status" class="w-full py-1 text-[11px] font-bold text-center rounded transition-all bg-zinc-900 text-zinc-500">角度を解析中...</div>
+                <div id="angle-status" class="w-full py-2 text-[11px] font-bold text-center rounded transition-all bg-zinc-900 text-zinc-500">目線の高さで水平に構えてください</div>
             </div>
-            <div id="status-badge" class="bg-zinc-900 text-green-500 px-3 py-1 rounded border border-green-800 text-[10px] font-bold tracking-widest uppercase italic">Ready</div>
         </div>
 
         <div id="crosshair">
             <div id="v-line" class="cross-line v-line"></div>
             <div id="h-line" class="cross-line h-line"></div>
-            <div id="center-dot" class="w-4 h-4 bg-green-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-lg transition-colors"></div>
-            
-            <!-- 水平器ゲージ -->
+            <div class="inner-circle"></div>
+            <div id="center-dot" class="w-2 h-2 bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-lg"></div>
             <div id="level-indicator"><div id="level-ball"></div></div>
         </div>
 
         <div class="absolute right-[-100px] top-1/2 -translate-y-1/2 w-64 h-64 flex items-center justify-center pointer-auto">
             <input type="range" id="zoom-slider" min="1" max="10" step="0.1" value="1" class="v-range">
-            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded italic">ZOOM</div>
+            <div class="absolute right-[140px] text-[10px] text-green-500 font-bold bg-black/80 px-2 py-1 border border-green-900 rounded italic uppercase">Zoom</div>
         </div>
 
         <div class="p-6 bg-black/95 border-t-2 border-green-900 pointer-auto">
             <div class="flex justify-between items-center gap-4">
-                <div class="flex-1 bg-zinc-950 p-3 rounded border border-green-900 h-28 overflow-y-auto text-[11px] text-green-400 font-mono" id="log-list">
-                    <div class="text-zinc-800 border-b border-zinc-900 mb-1 italic">-- SENSOR HISTORY --</div>
+                <div class="flex-1 bg-zinc-950 p-3 rounded border border-green-900 h-24 overflow-y-auto text-[11px] text-green-400 font-mono" id="log-list">
+                    <div class="text-zinc-800 border-b border-zinc-900 mb-1 italic">-- LOG DATA --</div>
                 </div>
-                <button id="record-btn" class="w-24 h-24 bg-green-600 rounded-2xl border-4 border-white/20 shadow-xl flex items-center justify-center active:scale-95 transition-all">
-                    <div class="text-center"><span class="font-black text-black text-sm">記録</span><br><span class="text-[8px] text-black/60 font-bold">LOG</span></div>
+                <button id="record-btn" class="w-20 h-20 bg-green-600 rounded-full border-4 border-white/20 shadow-xl flex items-center justify-center active:scale-95 transition-all">
+                    <span class="font-black text-black text-xs">SAVE</span>
                 </button>
             </div>
         </div>
@@ -120,21 +122,21 @@
         const zoomSlider = document.getElementById('zoom-slider');
         const logList = document.getElementById('log-list');
         const startBtn = document.getElementById('start-btn');
+        const calibrateBtn = document.getElementById('calibrate-btn');
         const recordBtn = document.getElementById('record-btn');
         const splash = document.getElementById('splash-screen');
-        const statusBadge = document.getElementById('status-badge');
         const angleStatus = document.getElementById('angle-status');
         const hLine = document.getElementById('h-line');
         const vLine = document.getElementById('v-line');
-        const centerDot = document.getElementById('center-dot');
         const levelBall = document.getElementById('level-ball');
 
         let videoTrack = null;
+        let pitchOffset = 0; // 水平キャリブレーション用
         
-        // 数値安定化用の変数 (指数移動平均フィルタ)
+        // 超安定化用フィルタ (指数移動平均)
         let filteredPitch = 0;
-        const smoothingFactorNormal = 0.2; // 近距離用スムージング
-        const smoothingFactorStable = 0.05; // 遠距離用（より強力なフィルタリング）
+        const K_NORMAL = 0.15;
+        const K_STABLE = 0.03; // 遠距離（水平付近）では極限までノイズを削る
 
         async function init() {
             try {
@@ -155,69 +157,88 @@
 
                 splash.style.opacity = '0';
                 setTimeout(() => splash.remove(), 800);
-                statusBadge.innerText = "Active";
-                statusBadge.classList.replace('text-green-500', 'text-white');
-                statusBadge.classList.add('bg-green-700');
 
             } catch (err) {
-                alert("エラー: HTTPS接続とカメラ・センサーの許可が必要です。");
+                alert("カメラまたはセンサーの起動に失敗しました。");
             }
         }
+
+        // 水平キャリブレーション
+        calibrateBtn.addEventListener('click', () => {
+            pitchOffset = lastRawPitch; 
+            if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+            console.log("Calibrated at: " + pitchOffset);
+        });
+
+        let lastRawPitch = 0;
 
         function onOrientation(e) {
-            const rawPitch = e.beta; // 前後の傾き
-            const roll = e.gamma;  // 左右の傾き（水平器用）
+            lastRawPitch = e.beta;
+            const currentPitch = e.beta - pitchOffset; // キャリブレーション適用
+            const roll = e.gamma; 
 
-            // 水平器の表示更新（±30度の範囲を可視化）
-            const ballPos = 50 + (roll * 1.5); 
+            // 水平器表示
+            const ballPos = 50 + (roll * 2); 
             levelBall.style.left = Math.max(5, Math.min(95, ballPos)) + "%";
 
-            // 遠距離（角度が浅い時）ほどフィルタリングを強める
-            const factor = (rawPitch < 12) ? smoothingFactorStable : smoothingFactorNormal;
+            // 角度が10度未満のときはフィルタリングを極限まで強化（遠距離最適化）
+            const factor = (Math.abs(currentPitch) < 10) ? K_STABLE : K_NORMAL;
             
-            // 指数移動平均フィルタ
-            if (filteredPitch === 0) filteredPitch = rawPitch;
-            filteredPitch = (factor * rawPitch) + ((1 - factor) * filteredPitch);
+            if (filteredPitch === 0) filteredPitch = currentPitch;
+            filteredPitch = (factor * currentPitch) + ((1 - factor) * filteredPitch);
 
-            pitchDisplay.innerText = filteredPitch.toFixed(1) + "°";
+            pitchDisplay.innerText = filteredPitch.toFixed(2) + "°";
             
-            updateAngleIndicator(filteredPitch, roll);
+            updateUI(filteredPitch, roll);
             
             const h = parseFloat(camHeightInput.value) || 1.5;
-            const theta = 90 - filteredPitch;
             
-            if (theta <= 0.5) {
-                resultDisplay.innerHTML = "MAX RANGE";
+            // 物理的に「水平より下」を向いている時のみ計算
+            if (filteredPitch > 0.2) {
+                const theta_rad = (90 - filteredPitch) * (Math.PI / 180);
+                const dist = h * Math.tan(theta_rad);
+                
+                if (dist > 100) {
+                    resultDisplay.innerHTML = "TOO FAR";
+                } else {
+                    resultDisplay.innerHTML = dist.toFixed(dist > 15 ? 1 : 2) + "<span class='text-2xl ml-1 font-normal'>m</span>";
+                }
+            } else if (filteredPitch <= 0.2 && filteredPitch >= -0.5) {
+                resultDisplay.innerHTML = "HORIZON";
             } else {
-                const dist = h * Math.tan(theta * (Math.PI / 180));
-                // 10m超えたら小数点第1位、それ以下は第2位まで表示
-                resultDisplay.innerHTML = dist.toFixed(dist > 10 ? 1 : 2) + "<span class='text-2xl ml-1 font-normal'>m</span>";
+                resultDisplay.innerHTML = "---";
             }
         }
 
-        function updateAngleIndicator(pitch, roll) {
-            const isLevel = Math.abs(roll) < 2.0; // 左右の傾き許容範囲
+        function updateUI(pitch, roll) {
+            const isLevel = Math.abs(roll) < 1.5;
             
-            if (pitch >= 30 && pitch <= 60) {
-                angleStatus.innerText = "近距離・高精度モード";
-                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded bg-green-600 text-black";
-                setCrosshairColor("#0f0");
-            } else if (pitch < 12) {
-                angleStatus.innerText = isLevel ? "遠距離モード (手ブレ注意)" : "スマホを水平に保ってください";
-                angleStatus.className = isLevel ? "w-full py-1 text-[11px] font-bold text-center rounded bg-blue-900 text-white ideal-pulse" : "w-full py-1 text-[11px] font-bold text-center rounded bg-red-900 text-white";
-                setCrosshairColor(isLevel ? "#4ae" : "#f33");
+            if (pitch > 0.2 && pitch < 8) {
+                // 18m前後の理想的な角度（1.5m高で4.7度付近）
+                angleStatus.innerText = isLevel ? "遠距離ターゲット捕捉中" : "スマホの左右の傾きを直してください";
+                angleStatus.className = isLevel ? "w-full py-2 text-[11px] font-bold text-center rounded bg-blue-700 text-white ideal-pulse" : "w-full py-2 text-[11px] font-bold text-center rounded bg-red-900 text-white";
+                setCrosshairColor(isLevel ? "#4af" : "#f33");
+            } else if (pitch <= 0.2 && pitch >= -0.5) {
+                angleStatus.innerText = "完全水平（ここから少し下げて計測）";
+                angleStatus.className = "w-full py-2 text-[11px] font-bold text-center rounded bg-green-600 text-black";
+                setCrosshairColor("#fff");
             } else {
-                angleStatus.innerText = "通常計測モード";
-                angleStatus.className = "w-full py-1 text-[11px] font-bold text-center rounded bg-zinc-800 text-green-700";
-                setCrosshairColor("#0f0");
+                angleStatus.innerText = "角度を調整してください";
+                angleStatus.className = "w-full py-2 text-[11px] font-bold text-center rounded bg-zinc-800 text-zinc-500";
+                setCrosshairColor("rgba(0, 255, 0, 0.5)");
             }
         }
 
         function setCrosshairColor(color) {
             hLine.style.background = color;
             vLine.style.background = color;
-            centerDot.style.background = color;
-            centerDot.style.boxShadow = `0 0 10px ${color}`;
+            if (color.startsWith('#')) {
+                hLine.style.boxShadow = `0 0 8px ${color}`;
+                vLine.style.boxShadow = `0 0 8px ${color}`;
+            } else {
+                hLine.style.boxShadow = "none";
+                vLine.style.boxShadow = "none";
+            }
         }
 
         recordBtn.addEventListener('click', () => {
