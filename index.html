@@ -3,251 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>人物距離測定 Pro</title>
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23000'/%3E%3Cpath d='M256 150v212M180 256h152' stroke='%230F0' stroke-width='20' stroke-linecap='round'/%3E%3Ccircle cx='256' cy='256' r='180' stroke='%230F0' stroke-width='10' fill='none'/%3E%3C/svg%3E">
-
+    <title>Smart Rangefinder - Manual</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        #video-preview { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        #ui-layer { position: relative; z-index: 10; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; }
-        .pointer-auto { pointer-events: auto; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #camera-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
         
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #111; z-index: 100; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; transition: opacity 0.8s ease-out;
+        /* 水平線（アイレベル） */
+        .horizon {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            border-top: 1px dashed rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+        }
+        .horizon::after {
+            content: "水平線 (目線の高さに合わせて保持)";
+            color: white;
+            font-size: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            margin-top: -20px;
+            border-radius: 4px;
         }
 
-        /* 人物測定用照準 */
-        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 240px; height: 160px; pointer-events: none; }
-        .guide-bracket { position: absolute; width: 30px; height: 30px; border-color: #0f0; border-width: 0; transition: all 0.3s; }
-        .top-left { top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; }
-        .top-right { top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; }
-        .bottom-left { bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; }
-        .bottom-right { bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; }
-        
-        .center-marker { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 2px; background: rgba(0,255,0,0.3); }
-
-        .v-range { appearance: none; width: 220px; height: 8px; background: rgba(0,0,0,0.6); border: 1px solid #0f0; border-radius: 4px; transform: rotate(-90deg); }
-        .v-range::-webkit-slider-thumb { appearance: none; width: 30px; height: 30px; background: #0f0; border-radius: 50%; border: 2px solid white; }
-        
-        .pulse-blue { animation: pulseB 1.5s infinite; }
-        @keyframes pulseB { 0%, 100% { box-shadow: 0 0 5px #3b82f6; } 50% { box-shadow: 0 0 20px #3b82f6; } }
-
-        #level-indicator {
-            position: absolute; left: 50%; top: calc(50% + 100px); transform: translateX(-50%);
-            width: 140px; height: 2px; background: rgba(255,255,255,0.2);
+        /* ターゲットライン */
+        #target-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff3b30;
+            box-shadow: 0 0 10px rgba(255, 59, 48, 1);
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
         }
-        #level-ball {
-            position: absolute; top: -6px; left: 50%; width: 14px; height: 14px;
-            background: #fff; border-radius: 50%; transform: translateX(-50%);
-            transition: left 0.05s linear;
+        #target-line::after {
+            content: "対象物の接地点 (足元) に合わせる";
+            color: #ff3b30;
+            font-size: 12px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 12px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 59, 48, 0.4);
+        }
+
+        /* 上部UIパネル */
+        .top-panel {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 360px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 16px;
+            color: white;
+            z-index: 20;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .distance-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        #dist-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #4cd964;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .unit {
+            font-size: 1.4rem;
+            margin-left: 8px;
+            color: #4cd964;
+            font-weight: bold;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 4px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            color: white;
+            width: 70px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .touch-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            touch-action: none;
+        }
+        
+        #error-msg {
+            position: absolute;
+            top: 50%;
+            width: 80%;
+            left: 10%;
+            transform: translateY(-50%);
+            background: rgba(220, 38, 38, 0.9);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            display: none;
+            z-index: 100;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="mb-8 text-green-500 animate-bounce">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+    <div id="camera-container">
+        <video id="video" autoplay playsinline muted></video>
+        
+        <div class="touch-area" id="touch-area"></div>
+
+        <div class="overlay">
+            <div class="horizon"></div>
+            <div id="target-line"></div>
         </div>
-        <h1 class="text-white font-black tracking-widest text-2xl mb-2">PERSON MEASURER</h1>
-        <p class="text-zinc-500 text-xs tracking-widest uppercase">立っている人物の足元を狙ってください</p>
-        <button id="start-btn" class="mt-10 bg-green-500 text-black font-black py-4 px-16 rounded-full shadow-lg active:scale-95 transition-all pointer-auto">カメラ起動</button>
-    </div>
 
-    <video id="video-preview" autoplay playsinline muted></video>
+        <div id="error-msg">カメラの使用を許可してください。</div>
 
-    <div id="ui-layer">
-        <div class="p-4 pt-12 flex flex-col gap-3 items-center w-full">
-            <!-- メインディスプレイ -->
-            <div class="bg-black/80 backdrop-blur-md border border-white/20 p-5 rounded-3xl pointer-auto shadow-2xl w-full max-w-[340px]">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] text-zinc-400 font-bold tracking-widest uppercase">Target Distance</span>
-                    <button id="calibrate-btn" class="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full font-bold active:bg-blue-400 transition-colors">水平校正</button>
-                </div>
-                
-                <div id="result-display" class="text-7xl font-black text-white italic tracking-tighter leading-none mb-4 text-center">---<span class="text-2xl ml-1 font-normal not-italic">m</span></div>
-                
-                <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 text-center">
-                    <div>
-                        <span class="text-[9px] text-zinc-500 block font-bold uppercase mb-1">現在の俯角</span>
-                        <span id="pitch-display" class="text-xl text-green-400 font-mono font-bold">0.00°</span>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-zinc-500 block font-bold uppercase mb-1">あなたの目線高 (m)</span>
-                        <input type="number" id="cam-height" value="1.55" step="0.01" class="bg-zinc-900 text-xl text-white border border-zinc-700 w-full outline-none px-2 text-center rounded-lg font-mono">
-                    </div>
-                </div>
+        <div class="top-panel">
+            <div class="distance-display">
+                <span id="dist-value">0.00</span>
+                <span class="unit">m</span>
             </div>
             
-            <div id="angle-status" class="px-6 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all bg-zinc-900/80 text-zinc-400 border border-white/10 shadow-lg">準備完了</div>
-        </div>
-
-        <!-- 人物キャプチャ用フレーム -->
-        <div id="crosshair">
-            <div id="bracket-tl" class="guide-bracket top-left"></div>
-            <div id="bracket-tr" class="guide-bracket top-right"></div>
-            <div id="bracket-bl" class="guide-bracket bottom-left"></div>
-            <div id="bracket-br" class="guide-bracket bottom-right"></div>
-            <div class="center-marker"></div>
-            <!-- 水平器 -->
-            <div id="level-indicator"><div id="level-ball"></div></div>
-        </div>
-
-        <!-- ズーム操作 -->
-        <div class="absolute right-[-80px] top-1/2 -translate-y-1/2 w-64 h-64 flex items-center justify-center pointer-auto">
-            <input type="range" id="zoom-slider" min="1" max="8" step="0.1" value="1" class="v-range">
-            <div class="absolute right-[130px] text-[9px] text-white font-bold bg-black/60 px-2 py-1 rounded border border-white/20 uppercase tracking-tighter">Zoom</div>
-        </div>
-
-        <div class="p-6 bg-gradient-to-t from-black to-transparent pointer-auto">
-            <div class="flex justify-between items-end gap-4">
-                <div class="flex-1 bg-black/60 backdrop-blur-sm p-3 rounded-2xl border border-white/10 h-20 overflow-y-auto text-[10px] text-zinc-400 font-mono" id="log-list">
-                    <div class="text-zinc-600 mb-1 border-b border-white/5">履歴データ</div>
+            <div class="settings-row">
+                <span class="text-xs text-gray-300 font-bold">カメラの高さ (目線の高さ)</span>
+                <div class="input-group">
+                    <input type="number" id="cam-height" value="1.50" step="0.01" inputmode="decimal">
+                    <span class="text-xs ml-1 font-bold text-gray-400">m</span>
                 </div>
-                <button id="record-btn" class="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all">
-                    <div class="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center">
-                        <span class="font-black text-black text-[10px]">SAVE</span>
-                    </div>
-                </button>
             </div>
         </div>
     </div>
 
     <script>
-        const video = document.getElementById('video-preview');
-        const resultDisplay = document.getElementById('result-display');
-        const pitchDisplay = document.getElementById('pitch-display');
-        const camHeightInput = document.getElementById('cam-height');
-        const zoomSlider = document.getElementById('zoom-slider');
-        const logList = document.getElementById('log-list');
-        const startBtn = document.getElementById('start-btn');
-        const calibrateBtn = document.getElementById('calibrate-btn');
-        const recordBtn = document.getElementById('record-btn');
-        const splash = document.getElementById('splash-screen');
-        const angleStatus = document.getElementById('angle-status');
-        const levelBall = document.getElementById('level-ball');
-        
-        const brackets = [
-            document.getElementById('bracket-tl'),
-            document.getElementById('bracket-tr'),
-            document.getElementById('bracket-bl'),
-            document.getElementById('bracket-br')
-        ];
+        const video = document.getElementById('video');
+        const touchArea = document.getElementById('touch-area');
+        const targetLine = document.getElementById('target-line');
+        const distValue = document.getElementById('dist-value');
+        const inputHeight = document.getElementById('cam-height');
+        const errorMsg = document.getElementById('error-msg');
 
-        let videoTrack = null;
-        let pitchOffset = 0; 
-        let filteredPitch = 0;
-        let lastRawPitch = 0;
-        const K_SMOOTH = 0.06; // 強力なフィルタリング
+        // デバイスの垂直FOV (平均的なスマホカメラは約60度)
+        const VERTICAL_FOV = 60; 
+        let targetY = window.innerHeight * 0.7;
 
-        async function init() {
+        async function initCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: { ideal: 1920 } }
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
                 });
                 video.srcObject = stream;
-                videoTrack = stream.getVideoTracks()[0];
-
-                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    const permission = await DeviceOrientationEvent.requestPermission();
-                    if (permission === 'granted') {
-                        window.addEventListener('deviceorientation', onOrientation, true);
-                    }
-                } else {
-                    window.addEventListener('deviceorientation', onOrientation, true);
-                }
-
-                splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 800);
-
             } catch (err) {
-                alert("カメラの許可が必要です。");
+                console.error("Camera error:", err);
+                errorMsg.style.display = 'block';
             }
         }
 
-        calibrateBtn.addEventListener('click', () => {
-            pitchOffset = lastRawPitch; 
-            if ("vibrate" in navigator) navigator.vibrate([50, 30, 50]);
-        });
+        function calculateDistance() {
+            const h = parseFloat(inputHeight.value) || 1.5;
+            const screenHeight = window.innerHeight;
+            const centerY = screenHeight / 2;
+            const offsetY = targetY - centerY;
 
-        function onOrientation(e) {
-            lastRawPitch = e.beta;
-            const currentPitch = e.beta - pitchOffset;
-            const roll = e.gamma; 
+            targetLine.style.top = `${targetY}px`;
 
-            // 水平器
-            const ballPos = 50 + (roll * 2.5); 
-            levelBall.style.left = Math.max(5, Math.min(95, ballPos)) + "%";
+            if (offsetY <= 0) {
+                distValue.innerText = "---";
+                return;
+            }
 
-            // フィルタリング
-            if (filteredPitch === 0) filteredPitch = currentPitch;
-            filteredPitch = (K_SMOOTH * currentPitch) + ((1 - K_SMOOTH) * filteredPitch);
+            // 画面上の位置を俯角（Depression Angle）に変換
+            const angleDeg = (offsetY / centerY) * (VERTICAL_FOV / 2);
+            const angleRad = angleDeg * (Math.PI / 180);
 
-            pitchDisplay.innerText = filteredPitch.toFixed(2) + "°";
-            
-            updateUI(filteredPitch, roll);
-            
-            const h = parseFloat(camHeightInput.value) || 1.55;
-            
-            if (filteredPitch > 0.1) {
-                const theta_rad = (90 - filteredPitch) * (Math.PI / 180);
-                const dist = h * Math.tan(theta_rad);
-                
-                if (dist > 50) {
-                    resultDisplay.innerHTML = "TOO FAR";
+            // 距離 = 高さ / tan(俯角)
+            const distance = h / Math.tan(angleRad);
+
+            if (distance > 0 && isFinite(distance)) {
+                if (distance < 10) {
+                    distValue.innerText = distance.toFixed(2);
+                } else if (distance < 100) {
+                    distValue.innerText = distance.toFixed(1);
                 } else {
-                    resultDisplay.innerHTML = dist.toFixed(dist > 10 ? 1 : 2) + "<span class='text-2xl ml-1 font-normal'>m</span>";
+                    distValue.innerText = Math.round(distance);
                 }
             } else {
-                resultDisplay.innerHTML = "---";
+                distValue.innerText = "---";
             }
         }
 
-        function updateUI(pitch, roll) {
-            const isLevel = Math.abs(roll) < 2.5;
-            const isTargetRange = pitch > 2 && pitch < 20; // 遠距離人物用
+        function handleInteraction(e) {
+            e.preventDefault();
+            const touch = e.touches ? e.touches[0] : e;
+            
+            // パネル操作時は無視
+            if (e.target.closest('.top-panel')) return;
 
-            if (isTargetRange) {
-                angleStatus.innerText = isLevel ? "人物捕捉中: 足元を固定してください" : "スマホを左右まっすぐに保ってください";
-                angleStatus.className = isLevel ? "px-6 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.6)] pulse-blue" : "px-6 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all bg-red-900 text-white border border-red-500";
-                setBracketColor(isLevel ? "#3b82f6" : "#ef4444");
-            } else if (Math.abs(pitch) < 0.5) {
-                angleStatus.innerText = "水平: ここから人物の足元まで下げます";
-                angleStatus.className = "px-6 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all bg-green-600 text-black";
-                setBracketColor("#10b981");
-            } else {
-                angleStatus.innerText = "ターゲットをフレーム内に";
-                angleStatus.className = "px-6 py-2 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all bg-zinc-900/80 text-zinc-400 border border-white/10";
-                setBracketColor("rgba(255,255,255,0.2)");
-            }
+            targetY = touch.clientY;
+            calculateDistance();
         }
 
-        function setBracketColor(color) {
-            brackets.forEach(b => b.style.borderColor = color);
-        }
-
-        recordBtn.addEventListener('click', () => {
-            if ("vibrate" in navigator) navigator.vibrate(40);
-            const log = document.createElement('div');
-            log.className = "border-b border-white/5 py-1 flex justify-between";
-            const timeStr = new Date().toLocaleTimeString('ja-JP', {hour12: false, minute:'2-digit', second:'2-digit'});
-            log.innerHTML = `<span class="text-zinc-600">${timeStr}</span> <span class="text-white font-bold">${resultDisplay.innerText}</span>`;
-            logList.prepend(log);
+        touchArea.addEventListener('touchstart', handleInteraction, {passive: false});
+        touchArea.addEventListener('touchmove', handleInteraction, {passive: false});
+        
+        touchArea.addEventListener('mousedown', (e) => {
+            const moveHandler = (me) => handleInteraction(me);
+            const upHandler = () => {
+                window.removeEventListener('mousemove', moveHandler);
+                window.removeEventListener('mouseup', upHandler);
+            };
+            window.addEventListener('mousemove', moveHandler);
+            window.addEventListener('mouseup', upHandler);
+            handleInteraction(e);
         });
 
-        zoomSlider.addEventListener('input', async (e) => {
-            if (videoTrack && videoTrack.getCapabilities().zoom) {
-                await videoTrack.applyConstraints({ advanced: [{ zoom: e.target.value }] });
-            }
-        });
+        inputHeight.addEventListener('input', calculateDistance);
+        window.addEventListener('resize', calculateDistance);
 
-        startBtn.addEventListener('click', init);
+        window.onload = () => {
+            initCamera();
+            setTimeout(calculateDistance, 500);
+        };
     </script>
 </body>
 </html>
