@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Smart Rangefinder</title>
 
-    <!-- アイコン設定 (Apple/iOS) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz4KICA8cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgogIDxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz4KICA8bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz4KICA8bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTTQwMCAyMDBMNDIwIDI1Nkw0MDAgMzEyIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHRleHQgeD0iMzc1IiB5PSIxODAiIGZpbGw9IiM0Q0Q5NjQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRJU1RBTkNFL3RleHQ+Cjwvc3ZnPg==">
-    
-    <!-- アイコン設定 (Android/Chrome/Standard) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz4KICA8cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgogIDxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz4KICA8bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz4KICA8bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTTQwMCAyMDBMNDIwIDI1Nkw0MDAgMzEyIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHRleHQgeD0iMzc1IiB5PSIxODAiIGZpbGw9IiM0Q0Q5NjQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRJU1RBTkNFL3RleHQ+Cjwvc3ZnPg==">
+    <!-- アイコン設定 (iOS/Safari) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz48cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz48bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz48bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPjxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9zdmc+">
+    <link rel="apple-touch-icon-precomposed" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz48cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz48bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz48bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPjxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9zdmc+">
 
-    <!-- モバイルアプリとしての振る舞い設定 -->
+    <!-- アイコン設定 (Android/Chrome/Others) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz48cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPjxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz48bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz48bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPjxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9zdmc+">
+
+    <!-- モバイルアプリとしての設定 -->
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#1A1A1A">
 
@@ -49,7 +51,6 @@
             pointer-events: none;
         }
         
-        /* 水平線（アイレベル） */
         .horizon {
             position: absolute;
             top: 50%;
@@ -69,7 +70,6 @@
             border-radius: 4px;
         }
 
-        /* ターゲットライン（接地点） */
         #target-line {
             position: absolute;
             left: 0;
@@ -93,7 +93,6 @@
             border: 1px solid rgba(255, 59, 48, 0.4);
         }
 
-        /* 上部UIパネル */
         .top-panel {
             position: absolute;
             top: env(safe-area-inset-top, 20px);
@@ -183,25 +182,17 @@
 
     <div id="camera-container">
         <video id="video" autoplay playsinline muted></video>
-        
-        <!-- タッチ操作エリア -->
         <div class="touch-area" id="touch-area"></div>
-
-        <!-- オーバーレイガイド -->
         <div class="overlay">
             <div class="horizon"></div>
             <div id="target-line"></div>
         </div>
-
         <div id="error-msg">カメラの使用を許可してください。</div>
-
-        <!-- 距離・高さ設定パネル -->
         <div class="top-panel">
             <div class="distance-display">
                 <span id="dist-value">0.00</span>
                 <span class="unit">m</span>
             </div>
-            
             <div class="settings-row">
                 <div class="flex flex-col">
                     <span class="text-[10px] uppercase text-gray-400 font-bold tracking-widest">Height</span>
@@ -223,18 +214,13 @@
         const inputHeight = document.getElementById('cam-height');
         const errorMsg = document.getElementById('error-msg');
 
-        // デバイスの垂直FOV（標準的なカメラは約60度）
         const VERTICAL_FOV = 60; 
         let targetY = window.innerHeight * 0.75;
 
         async function initCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    },
+                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
                     audio: false
                 });
                 video.srcObject = stream;
@@ -249,27 +235,16 @@
             const screenHeight = window.innerHeight;
             const centerY = screenHeight / 2;
             const offsetY = targetY - centerY;
-
             targetLine.style.top = `${targetY}px`;
-
             if (offsetY <= 0) {
                 distValue.innerText = "---";
                 return;
             }
-
             const angleDeg = (offsetY / centerY) * (VERTICAL_FOV / 2);
             const angleRad = angleDeg * (Math.PI / 180);
-
             const distance = h / Math.tan(angleRad);
-
             if (distance > 0 && isFinite(distance)) {
-                if (distance < 10) {
-                    distValue.innerText = distance.toFixed(2);
-                } else if (distance < 100) {
-                    distValue.innerText = distance.toFixed(1);
-                } else {
-                    distValue.innerText = Math.round(distance);
-                }
+                distValue.innerText = distance < 10 ? distance.toFixed(2) : (distance < 100 ? distance.toFixed(1) : Math.round(distance));
             } else {
                 distValue.innerText = "---";
             }
@@ -285,7 +260,6 @@
 
         touchArea.addEventListener('touchstart', handleInteraction, {passive: false});
         touchArea.addEventListener('touchmove', handleInteraction, {passive: false});
-        
         touchArea.addEventListener('mousedown', (e) => {
             const moveHandler = (me) => handleInteraction(me);
             const upHandler = () => {
@@ -296,14 +270,9 @@
             window.addEventListener('mouseup', upHandler);
             handleInteraction(e);
         });
-
         inputHeight.addEventListener('input', calculateDistance);
         window.addEventListener('resize', calculateDistance);
-
-        window.onload = () => {
-            initCamera();
-            setTimeout(calculateDistance, 500);
-        };
+        window.onload = () => { initCamera(); setTimeout(calculateDistance, 500); };
     </script>
 </body>
 </html>
