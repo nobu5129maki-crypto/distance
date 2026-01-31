@@ -2,12 +2,19 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Smart Rangefinder</title>
 
-    <!-- Apple Touch Icon (Home Screen Icon) -->
-    <!-- Base64 encoded version of the latest icon.svg design -->
+    <!-- アイコン設定 (Apple/iOS) -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz4KICA8cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgogIDxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz4KICA8bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz4KICA8bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTTQwMCAyMDBMNDIwIDI1Nkw0MDAgMzEyIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHRleHQgeD0iMzc1IiB5PSIxODAiIGZpbGw9IiM0Q0Q5NjQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRJU1RBTkNFL3RleHQ+Cjwvc3ZnPg==">
+    
+    <!-- アイコン設定 (Android/Chrome/Standard) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9IiMxQTFBUEEiLz4KICA8cmVjdCB4PSIxNTYiIHk9IjgwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjM1MiIgcng9IjI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMTE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgogIDxsaW5lIHgxPSIxNTYiIHkxPSIyNTYiIHgyPSIzNTYiIHkyPSIyNTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWRhc2hhcnJheT0iOCA4IiBvcGFjaXR5PSIwLjYiLz4KICA8bGluZSB4MT0iMTcwIiB5MT0iMzQwIiB4Mj0iMzQyIiB5Mj0iMzQwIiBzdHJva2U9IiNGRjNCMzAiIHN0cm9rZS13aWR0aD0iMTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iNDUiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI4IiBvcGFjaXR5PSIwLjgiLz4KICA8bGluZSB4MT0iMjU2IiB5MT0iMjExIiB4Mj0iMjU2IiB5Mj0iMzAxIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxsaW5lIHgxPSIyMTEiIHkxPSIyNTYiIHgyPSIzMDEiIHkyPSIyNTYiIHN0cm9rZT0iIzRDRDk2NCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTTQwMCAyMDBMNDIwIDI1Nkw0MDAgMzEyIiBzdHJva2U9IiM0Q0Q5NjQiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHRleHQgeD0iMzc1IiB5PSIxODAiIGZpbGw9IiM0Q0Q5NjQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiPkRJU1RBTkNFL3RleHQ+Cjwvc3ZnPg==">
+
+    <!-- モバイルアプリとしての振る舞い設定 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1A1A1A">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
